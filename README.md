@@ -1,5 +1,5 @@
 
-# 🦾 IsaacLab-SO_100: Cube Lifting with SO100 Robot Arm
+# 🦾 IsaacLab-SO_100: Cube Grasping and Manipulation with SO100 Robot Arm
 
 This project uses NVIDIA Isaac Lab and `skrl` to train a 5-DOF robotic arm (SO100) to **grasp and lift a cube** in simulation.
 
