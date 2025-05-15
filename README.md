@@ -126,12 +126,114 @@ IsaacLab-SO_100/
 
 ---
 
-## 👨‍🔬 Author
 
-- [Your Name / GitHub Link]
+
+## 🔧 **Project Summary: Cube Manipulation with SO100 Robot**
+
+This project uses a simulated 5-DOF robotic arm (SO100) to learn how to **grasp and lift a cube** using reinforcement learning (RL), implemented with **Isaac Lab + NVIDIA Omniverse Isaac Sim + `skrl` PPO**.
 
 ---
 
-## 📜 License
+## 🧱 Project Components Breakdown
 
-This project is released under the BSD-3-Clause License. See `LICENSE` for more info.
+### 1. **Environment (`SO100CubeLiftEnvCfg`)**
+
+This config defines everything about the simulated world.
+
+#### 🏗 Scene
+
+- **Robot:** SO100 robotic arm
+- **Object:** A cube (`dex_cube_instanceable.usd`)
+- **Table:** Seattle Lab table
+- **Markers:** Visual aids for robot end-effector and cube
+- **EE Frame:** `{ENV}/Robot/Fixed_Gripper` (used for control and tracking)
+
+#### 🧠 MDP Definition
+
+Markov Decision Process is defined in `so_100_base_env_cfg.py`:
+
+- **Observations:**
+  - Joint positions & velocities
+  - Object position (in robot frame)
+  - Target pose (commanded)
+  - Last actions
+
+- **Actions:**
+  - **Arm:** Joint position control for 5 joints
+  - **Gripper:** Binary open/close action
+
+- **Rewards:**
+  - +25 for lifting the object above 2cm
+  - +2 for reaching object
+  - Small penalties for:
+    - High joint velocity
+    - High action rate (to smooth motion)
+
+- **Terminations:**
+  - Timeout (episode end)
+  - Object falls below certain height
+
+- **Events:**
+  - Scene resets between episodes
+
+- **Curriculum Learning:**
+  - Gradually increases penalties on erratic actions to stabilize behavior
+
+---
+
+### 2. **MDP Components**
+
+Defined using modular functions in `mdp`, these handle the physics-based logic for:
+
+- Action processing
+- Observations
+- Rewards
+- Termination conditions
+- Command sampling
+
+---
+
+### 3. **Training Config (`skrl_ppo_cfg.yaml`)**
+
+You're training using **Proximal Policy Optimization (PPO)** from the `skrl` library.
+
+#### 🧠 Policy Network
+
+- Input: State (observations)
+- Hidden layers: [256, 128, 64]
+- Output: Action
+- Activation: `ELU`
+- Gaussian policy with log_std constraints
+
+#### 📊 Value Network
+
+- Similar structure as the policy network
+- Outputs scalar value estimates
+
+#### 🧮 PPO Parameters
+
+- 24 rollout steps
+- 8 learning epochs per update
+- 4 minibatches
+- Discount factor: `0.99`
+- GAE λ: `0.95`
+- Learning rate: `1e-4` with KL-adaptive scheduler
+- Clipping:
+  - Policy: `0.2`
+  - Value: `0.2`
+- Entropy bonus: `0.001`
+- Value loss scale: `2.0`
+
+#### 🧠 Normalization
+
+- `RunningStandardScaler` used for both state and value normalization
+
+#### 💾 Logging
+
+- Logs and checkpoints go to: `SO100_lift/`
+
+#### ⏱ Trainer
+
+- `SequentialTrainer`
+- 36,000 timesteps
+
