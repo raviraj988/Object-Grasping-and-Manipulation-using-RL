@@ -29,7 +29,18 @@ The environment is defined using Isaac Lab's configuration system, and the reinf
 - Full training config and environment manager setup
 
 ---
+## 📋 Requirements
 
+- Windows 10/11 with NVIDIA GPU (RTX recommended)
+- Isaac Sim 4.5
+- Isaac Lab (from Omniverse or source)
+- Conda Python environment with dependencies (Isaac Lab docs)
+- `skrl` installed via pip:
+  ```bash
+  pip install skrl
+  ```
+
+---
 ## 📦 Installation
 
 ### 1. Clone the Repository
@@ -113,18 +124,6 @@ IsaacLab-SO_100/
 
 ---
 
-## 📋 Requirements
-
-- Windows 10/11 with NVIDIA GPU (RTX recommended)
-- Isaac Sim 4.5
-- Isaac Lab (from Omniverse or source)
-- Conda Python environment with dependencies (Isaac Lab docs)
-- `skrl` installed via pip:
-  ```bash
-  pip install skrl
-  ```
-
----
 
 
 
